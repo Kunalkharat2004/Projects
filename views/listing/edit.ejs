@@ -1,22 +1,83 @@
 <% layout("/layouts/boilerplate") -%>
 <body>
-    <h3>Edit Listing</h3>
-    <form method="POST" action="/listing/<%=listToEdit._id %>?_method=PUT">
-        <label for="title">Title: </label>
-        <input type="text" name="listing[title]" placeholder="Enter a title" id="title" value="<%=listToEdit.title %>">
-        <br><br>
-        <label for="description">Description: </label><br>
-        <textarea name="listing[description]" id="description" cols="30" rows="10" placeholder="Enter a description"><%=listToEdit.description %></textarea>
-        <br><br>
-        <label for="price">Price: </label>
-        <input type="number" id="price" name="listing[price]" value="<%=listToEdit.price %>">
-        <br><br>
-        <label for="location">Location: </label>
-        <input type="text" name="listing[location]" id="location" placeholder="Enter location" value="<%=listToEdit.location %>">
-        <br><br>
-        <label for="country">Country: </label>
-        <input type="text" name="listing[country]" id="country" placeholder="Enter country" value="<%=listToEdit.country %>">
-        <br><br>
-        <button>Confirm</button>
+    <div class="row mt-3">
+        <div class="col offset-2">
+    <h3>Edit your Listing</h3>
+    <form method="POST" action="/listing/<%=listToEdit._id %>?_method=PUT" class="needs-validation"  novalidate>
+        <div class="mb-4">
+             <label for="title" class="form-label">Title: </label>
+            <input type="text" name="listing[title]" placeholder="Enter a title" id="title" value="<%=listToEdit.title %>" required class="form-control">
+            <div class="valid-feedback">
+                Title looks good!
+              </div>
+              <div class="invalid-feedback">
+                Please enter a title
+              </div>
+        </div>
+       
+      <div class="mb-4">
+        <label for="description" class="form-label">Description: </label><br>
+        <textarea name="listing[description]" id="description" placeholder="Enter a description" class="form-control" required><%=listToEdit.description %></textarea>
+        <div class="valid-feedback">
+            Description looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please enter a description
+          </div>
+    </div>
+        
+    <div class="mb-4">
+        <label for="image" class="form-label">Image: </label>
+       <input type="text" name="listing[image]" placeholder="Image Link" id="image" class="form-control" value="<%=listToEdit.image %>" required>
+       <div class="valid-feedback">
+        Image looks good!
+      </div>
+      <div class="invalid-feedback">
+        Please give a valid image link
+      </div>
+       
+   </div>
+
+    <div class="row">
+        <div class="col-md-4">
+    <div class="mb-4">
+        <label for="price" class="form-label">Price: </label>
+        <input type="number" id="price" name="listing[price]" placeholder="Enter price" class="form-control" value="<%=listToEdit.price %>" required>
+        <div class="valid-feedback">
+            Price looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please enter a price
+          </div>
+    </div>
+</div>
+
+<div class="col-md-8">
+    <div class="mb-4">
+        <label for="location" class="form-label">Location: </label>
+        <input type="text" name="listing[location]" id="location" placeholder="Enter location" class="form-control" value="<%=listToEdit.location %>" required>
+        <div class="valid-feedback">
+            Location looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please enter a location
+          </div>
+    </div>
+</div>
+</div>
+    <div class="mb-4">
+        <label for="country" class="form-label">Country: </label>
+        <input type="text" name="listing[country]" id="country" placeholder="Enter country" class="form-control" value="<%=listToEdit.country %>" required>
+        <div class="valid-feedback">
+            Country looks good!
+          </div>
+          <div class="invalid-feedback">
+             Country is invalid
+          </div>
+    </div>
+       
+        <button class="btn btn-dark edit-btn mt-3 mb-3">Confirm</button>
     </form>
+</div>
+</div>
 </body>

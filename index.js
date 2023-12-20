@@ -1,89 +1,78 @@
-const express= require("express");
+const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const Listing = require("./model/Listing.js");
 const path = require("path");
-const methodOverride = require('method-override');
+const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
-
 const MONGO_URI = "mongodb://127.0.0.1:27017/airbnb";
+const ExpressError = require("./utils/ExpressError.js");
+const listing = require("./routes/listing.js");
+const review = require("./routes/reviews.js");
+const session = require("express-session");
+const flash = require("connect-flash");
 
-async function main(){
-    await mongoose.connect(MONGO_URI);
+//Making connection with mongodb 
+async function main() {
+  await mongoose.connect(MONGO_URI);
 }
 main()
-.then((res)=>{console.log("Sucessfully connected to Database");})
-.catch((err)=>{console.log(err);});
+  .then((res) => {
+    console.log("Sucessfully connected to Database");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
-app.listen(8080,()=>{
-    console.log("Listening at port 8080");
-})
-
-app.set("view engine","ejs");
-app.set("views",path.join(__dirname,"views"));
-app.use(express.static(path.join(__dirname,"/public")));
-app.use(express.urlencoded({extended:true}));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static(path.join(__dirname, "/public")));
+app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
-app.engine('ejs', ejsMate);
+app.engine("ejs", ejsMate);
 
-// app.get("/testListing",(req,res)=>{
-//   let sampleData = new Listing({
-//     title:"Sweet Home",
-//     description:"My house ,my dream",
-//     price:3500,
-//     location:"Calangute ,Goa",
-//     country:"India"
-//   });
-
-//   sampleData
-//   .save()
-//   .then((res)=>{console.log(res);})
-// .catch((err)=>{console.log(err);});
-
-// res.send("Saved sucessfull! :)")
-// });
-app.get("/",(req,res)=>{
+//Home route
+app.get("/", (req, res) => {
   res.send("Hi I am root");
-})
-app.get("/listing",async(req,res)=>{
-  const allListing = await Listing.find({});
-  res.render("listing/index.ejs",{allListing});
-})
-
-app.get("/listing/new",(req,res)=>{
-  res.render("listing/new.ejs");
-})
-
-app.get("/listing/:id",async(req,res)=>{
-  let {id} = req.params;
- let listings = await Listing.findById(id);
- res.render("listing/show.ejs",{listings});
 });
 
-app.post("/listing",(req,res)=>{
-  let listing = req.body.listing;
-  const newListing = new Listing(listing);
-  newListing
-  .save()
-  .then((res)=>{console.log(res);})
-  .catch((err)=>{console.log(err);})
-  res.redirect("/listing");
-})
+const sessionOptions = {
+  secret:"mysupersecret",
+  resave: false,
+  saveUninitialized:true,
+  cookie:{
+    expires: Date.now() + 7*24*60*60*1000,
+    maxAge: 7*24*60*60*1000
+  }
+}
+  app.use(session(sessionOptions));
 
-app.get("/listing/:id/edit",async(req,res)=>{
-  let {id} = req.params;
-  let listToEdit = await Listing.findById(id);
-  res.render("listing/edit.ejs",{listToEdit});
+  //Flash middleware
+  app.use(flash());
+
+  app.use((req,res,next)=>{
+    res.locals.success = req.flash("success")
+    res.locals.error = req.flash("error");
+    next();
+  })
+
+
+//Express Router
+app.use("/listing",listing);
+app.use("/listing/:id/review",review);
+  
+app.all("*", (req, res, next) => {
+  next(new ExpressError(404, "Page not found!"));
 });
 
-app.put("/listing/:id",async(req,res)=>{
-  let {id} = req.params;
- let updatedList = await Listing.findByIdAndUpdate(id,{...req.body.listing},{runValidators:true,new:true})
- res.redirect(`/listing/${id}`);
+
+
+// Error handling middleware:
+app.use((err, req, res, next) => {
+  let { status = 500, message = "Something went wrong!" } = err;
+  res.status(status).render("listing/error.ejs", { message });
+  // res.status(status).send(message);
 });
 
-app.delete("/listing/:id/delete",async(req,res)=>{
-  let {id} = req.params;
- let deletedList = await Listing.findByIdAndDelete(id)
- res.redirect("/listing");
-})
+app.listen(8080, () => {
+  console.log("Listening at port 8080");
+});

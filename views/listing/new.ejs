@@ -1,23 +1,79 @@
 <% layout("/layouts/boilerplate") -%>
 <body>
+    <div class="row mt-3">
+        <div class="col-8 offset-2">
     <h3>New Listing</h3>
-    <form method="POST" action="/listing">
-        <label for="title">Title: </label>
-        <input type="text" name="listing[title]" placeholder="Enter a title" id="title">
-        <br><br>
-        <label for="description">Description: </label><br>
-        <textarea name="listing[description]" id="description" cols="30" rows="10" placeholder="Enter a description"></textarea>
-        <br><br>
-        <label for="price">Price: </label>
-        <input type="number" id="price" name="listing[price]">
-        <br><br>
-        <label for="location">Location: </label>
-        <input type="text" name="listing[location]" id="location" placeholder="Enter location">
-        <br><br>
-        <label for="country">Country: </label>
-        <input type="text" name="listing[country]" id="country" placeholder="Enter country">
-        <br><br>
-        <button>Add</button>
-    </form>
+    <form method="POST" action="/listing" class="needs-validation"  novalidate>
+        <div class="mb-4">
+             <label for="title" class="form-label">Title: </label>
+            <input type="text" name="listing[title]" placeholder="Enter a title" id="title" class="form-control" required>
+            <div class="valid-feedback">
+                Title looks good!
+              </div>
+              <div class="invalid-feedback">
+                Please enter a title
+              </div>
+        </div>
+       
+      <div class="mb-4">
+        <label for="description" class="form-label">Description: </label><br>
+        <textarea name="listing[description]" id="description" placeholder="Enter a description" class="form-control" required></textarea>
+        <div class="valid-feedback">
+           Description looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please enter a description
+          </div>
+    </div>
 
+    <div class="mb-4">
+        <label for="image" class="form-label">Image: </label>
+       <input type="text" name="listing[image]" placeholder="Image Link" id="image" class="form-control">
+   </div>
+        
+   <div class="row">
+    <div class="col-md-4">
+    <div class="mb-3">
+        <label for="price" class="form-label">Price: </label>
+        <input type="text" id="price" placeholder="Enter price" name="listing[price]" class="form-control" required>
+        <div class="valid-feedback">
+            Price looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please enter a price
+          </div>
+    </div>
+    </div>
+
+    <div class="col-md-8">
+    <div class="mb-4">
+        <label for="location" class="form-label">Location: </label>
+        <input type="text" name="listing[location]" id="location" placeholder="Enter location" class="form-control" required>
+        <div class="valid-feedback">
+            Location looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please enter a location
+          </div>
+    </div>
+   </div>
+   </div>
+   
+        
+    <div class="mb-4">
+        <label for="country" class="form-label">Country: </label>
+        <input type="text" name="listing[country]" id="country" placeholder="Enter country" class="form-control" required>
+        <div class="valid-feedback">
+            Country looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please enter a country
+          </div>
+    </div>
+       
+        <button class="btn btn-dark add-new mt-3 mb-3">Confirm</button>
+       
+    </form>
+</div>
+</div>
 </body>
