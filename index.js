@@ -1,3 +1,7 @@
+if(process.env.NODE_ENV != "production"){
+  require("dotenv").config();
+};
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -6,10 +10,14 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const MONGO_URI = "mongodb://127.0.0.1:27017/airbnb";
 const ExpressError = require("./utils/ExpressError.js");
-const listing = require("./routes/listing.js");
-const review = require("./routes/reviews.js");
+const listingRoute = require("./routes/listing.js");
+const reviewRoute = require("./routes/reviews.js");
+const userRoute = require("./routes/user.js");
 const session = require("express-session");
 const flash = require("connect-flash");
+const User = require("./model/User.js");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
 
 //Making connection with mongodb 
 async function main() {
@@ -45,20 +53,29 @@ const sessionOptions = {
   }
 }
   app.use(session(sessionOptions));
-
-  //Flash middleware
   app.use(flash());
+  
+  app.use(passport.initialize());
+  app.use(passport.session());
+  passport.use(new LocalStrategy(User.authenticate()));
+
+  passport.serializeUser(User.serializeUser());
+  passport.deserializeUser(User.deserializeUser());
+  
+  //Flash middleware
 
   app.use((req,res,next)=>{
     res.locals.success = req.flash("success")
     res.locals.error = req.flash("error");
+    res.locals.currUser = req.user;
     next();
   })
 
 
 //Express Router
-app.use("/listing",listing);
-app.use("/listing/:id/review",review);
+app.use("/listing",listingRoute);
+app.use("/listing/:id/review",reviewRoute);
+app.use("/user",userRoute);
   
 app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Page not found!"));
